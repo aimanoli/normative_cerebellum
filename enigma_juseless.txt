@@ -1,0 +1,29 @@
+# Create Yoda dataset named acapulco_datalad
+datalad create -c yoda acapulco_datalad
+
+# Clone dataset in inputs/dHCP directory
+datalad clone -d . "ria+http://hcp-d.ds.inm7.de#~super" inputs/dHCP 
+
+# Get T1 file
+# If it asks for credentials keep hitting enter until it gets the file
+datalad get inputs/dHCP/HCD2993079_V1_MR/T1w/T1w_acpc_dc_restore.nii.gz 
+
+# Copy acapulco container to code directory
+datalad run -m "adding acapulco container" "cp ../acapulco/acapulco-0.2.1.sif  code/"
+
+# Run Singularity 3 with Conda
+conda create --name singularity3
+conda activate singularity3
+conda install -c conda-forge singularity
+
+# Run acapulco for one subject 
+# NOTE: This code should work, but for now we need to set /proc/sys/kernel/unprivileged_userns_clone to 1
+ 
+datalad run -m "running acapulco on one subject" "singularity run --cleanenv -B $PWD:$PWD code/acapulco-0.2.1.sif -i inputs/dHCP/HCD2993079_V1_MR/T1w/T1w_acpc_dc_restore.nii.gz -o outputs"
+
+# Run freesurfer for one subject
+datalad run --explicit -o outputs/freesurfer/HCD2993079 -m "freesurfer one subject" "recon-all -i inputs/dHCP/HCD2993079_V1_MR/T1w/T1w_acpc_dc_restore.nii.gz -s HCD2993079 -sd outputs/freesurfer -autorecon1"
+
+
+
+
