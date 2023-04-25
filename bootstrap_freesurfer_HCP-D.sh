@@ -3,7 +3,7 @@ set -e -u
 # Jobs are set up to not require a shared filesystem (except for the lockfile)
 
 # project name space
-PROJECT="Cereb_Norm"
+PROJECT="freesurfer_ICV"
 
 # define SAMPLE to be processed
 SAMPLE="HCP-D"
@@ -111,7 +111,7 @@ find \\
   inputs/${MRI_dir}/\${subid} \\
   -name "T1w_acpc_dc_restore.nii.gz" \\
   -exec sh -c '
-    odir=\$(echo {} | cut -d / f3 | cut -c1-10);
+    odir=\$(echo {} | cut -d / -f3 | cut -c1-10);
     datalad -c datalad.annex.retry=12 containers-run \\
       -m "Compute \$odir" \\
       -n freesurfer-732 \\
@@ -119,9 +119,9 @@ find \\
       -o \$odir \\
       -i {} \\
       sh -e -u -x -c "
-        rm -rf {outputs[0]};
-        mkdir -p {outputs[0]} \\
-        && /singularity -i {inputs[0]} -s {outputs[0]} -sd {outputs[0]} -autorecon1 \\
+        mkdir -p freesurfer \\
+        && /singularity recon-all -i {inputs[0]} -s {outputs[0]} -sd freesurfer -autorecon1 \\
+        && rm -fr freesurfer/{outputs[0]}/mri/orig freesurfer/{outputs[0]}/mri/rawavg.mgz \\
         " \\
   ' \\;
 
