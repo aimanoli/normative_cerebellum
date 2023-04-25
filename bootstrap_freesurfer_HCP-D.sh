@@ -100,7 +100,7 @@ git checkout -b "job-\${JOBID}"
 # re-run we want to be able to do fine-grained recomputing of individual
 # outputs. The recorded calls will have specific paths that will enable
 # recomputation outside the scope of the original Condor setup
-datalad get -s inm7-storage "inputs/${MRI_dir}/\${subid}_V1_MR/T1w/T1w_acpc_dc_restore.nii.gz"
+datalad get -s inm7-storage "inputs/${MRI_dir}/\${subid}/T1w/T1w_acpc_dc_restore.nii.gz"
 
 # the meat of the matter
 # look for T1w files in the input data for the given participant
