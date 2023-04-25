@@ -22,8 +22,8 @@ output_store="ria+file:///data/project/sleep_ENIGMA_deprivation/dataladstore"
 raw_store="ria+http://hcp-d.ds.inm7.de#~super"
 
 # Build CAT container here: https://github.com/inm7-sysmed/ENIGMA-cat12-container
-container_store="ria+file:///data/project/cat_preprocessed/dataladstore#~acapulco-0.3.0"
-container="acapulco-0.3.0.simg"
+container_store="ria+file:///data/project/cat_preprocessed/dataladstore#~containers"
+container="neurodesk-freesurfer--7.3.2.simg"
 
 # define the temporal working directory to clone and process each subject on
 temporary_store=/tmp
@@ -43,9 +43,9 @@ datalad clone -d . "${container_store}" code/acapulco
 # configure a custom container call to satisfy the needs of this analysis
 datalad containers-add \
   --call-fmt 'singularity exec -B {{pwd}} --cleanenv {img} {cmd}' \
-  -i code/acapulco/${container} \
-  acapulco030
-git commit --amend -m 'Register Acapulco pipeline dataset'
+  -i code/containers/images/neurodesk/${container} \
+  freesurfer-732
+git commit --amend -m 'Register FreeSurfer pipeline dataset'
 
 # create dedicated input and output locations. Results will be pushed into the
 # output sibling, and the analysis will start with a clone from the input
@@ -100,7 +100,7 @@ git checkout -b "job-\${JOBID}"
 # re-run we want to be able to do fine-grained recomputing of individual
 # outputs. The recorded calls will have specific paths that will enable
 # recomputation outside the scope of the original Condor setup
-datalad get "inputs/${MRI_dir}/\${subid}_V1_MR/T1w/T1w_acpc_dc_restore.nii.gz"
+datalad get -s inm7-storage "inputs/${MRI_dir}/\${subid}_V1_MR/T1w/T1w_acpc_dc_restore.nii.gz"
 
 # the meat of the matter
 # look for T1w files in the input data for the given participant
@@ -114,14 +114,14 @@ find \\
     odir=\$(echo {} | cut -d / f3 | cut -c1-10);
     datalad -c datalad.annex.retry=12 containers-run \\
       -m "Compute \$odir" \\
-      -n acapulco030 \\
+      -n freesurfer-732 \\
       --explicit \\
       -o \$odir \\
       -i {} \\
       sh -e -u -x -c "
         rm -rf {outputs[0]};
         mkdir -p {outputs[0]} \\
-        && /singularity -i {inputs[0]} -o {outputs[0]} \\
+        && /singularity -i {inputs[0]} -s {outputs[0]} -sd {outputs[0]} -autorecon1 \\
         " \\
   ' \\;
 
