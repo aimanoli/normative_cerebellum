@@ -42,7 +42,7 @@ cd ${SAMPLE}_${PROJECT}
 datalad clone -d . "${container_store}" code/acapulco
 # configure a custom container call to satisfy the needs of this analysis
 datalad containers-add \
-  --call-fmt 'singularity run -B {{pwd}} --cleanenv {img} {cmd}' \
+  --call-fmt 'singularity exec -B {{pwd}} --cleanenv {img} {cmd}' \
   -i code/acapulco/${container} \
   acapulco030
 git commit --amend -m 'Register Acapulco pipeline dataset'
