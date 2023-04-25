@@ -39,7 +39,7 @@ datalad create -c yoda ${SAMPLE}_${PROJECT}
 cd ${SAMPLE}_${PROJECT}
 
 # register a container with the CAT tooldas Ganze
-datalad clone -d . "${container_store}" code/acapulco
+datalad clone -d . "${container_store}" code/containers
 # configure a custom container call to satisfy the needs of this analysis
 datalad containers-add \
   --call-fmt 'singularity exec -B {{pwd}} --cleanenv {img} {cmd}' \
