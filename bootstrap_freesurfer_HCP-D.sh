@@ -120,7 +120,7 @@ find \\
       -i {} \\
       sh -e -u -x -c "
         mkdir -p freesurfer \\
-        && /singularity recon-all -i {inputs[0]} -s {outputs[0]} -sd freesurfer -autorecon1 \\
+        && recon-all -i {inputs[0]} -s {outputs[0]} -sd freesurfer -autorecon1 \\
         && rm -fr freesurfer/{outputs[0]}/mri/orig freesurfer/{outputs[0]}/mri/rawavg.mgz \\
         " \\
   ' \\;
